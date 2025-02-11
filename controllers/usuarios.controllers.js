@@ -1,7 +1,7 @@
 const Usuario = require('../models/usuario.model');
 const { sendEmail } = require('./enviarcorreos.controllers.js');
 const crypto = require('crypto');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 
 let codigoVerificacion = null;
 let emailtemp = null;
@@ -48,11 +48,11 @@ async function createUsuario(req, res) {
         const tokenVerificacion = crypto.randomBytes(32).toString('hex');
         
         // Encriptar la contraseña
-        const passEncriptada = await bcrypt.hash(pass, 10);
+        //const passEncriptada = await bcrypt.hash(pass, 10);
 
         // Crear usuario sin activar
         const nuevoUsuario = new Usuario({
-            idusuario, idtipousu, nombres, apellidos, email, pass: passEncriptada, avatar,
+            idusuario, idtipousu, nombres, apellidos, email, pass, avatar,
             verificado: false,
             tokenVerificacion,
             verificaciondedospasos: true
