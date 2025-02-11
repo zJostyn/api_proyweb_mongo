@@ -176,8 +176,8 @@ async function verificarUsuario(req, res) {
             return res.status(404).json({ error: "Error, el usuario ingresado es incorrecto!" });
         }
 
-        const esValida = await bcrypt.compare(pass, usuario.pass);
-        if (!esValida) {
+        //const esValida = await bcrypt.compare(pass, usuario.pass);
+        if (pass != usuario.pass) {
             return res.status(400).json({ error: "Error, la contraseña ingresada es incorrecta!" });
         }
 
