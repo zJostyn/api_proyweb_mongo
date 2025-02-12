@@ -186,7 +186,44 @@ async function verificarUsuario(req, res) {
         }
 
         // Si la verificación en dos pasos está desactivada, enviar respuesta directa
+        const fechaHora = new Date().toLocaleString('es-ES', { timeZone: 'America/Guayaquil' });
+        const ipConexion = req.ip || "IP no disponible";
+
         if (!usuario.verificaciondospasos) {
+            // Enviar notificación de inicio de sesión exitoso
+            const mensajeHTML = `
+                <div style="text-align: center; font-family: Arial, sans-serif;">
+                    <img src="https://univercimas.com/wp-content/uploads/2021/04/Universidad-Tecnica-de-Machala.png" 
+                        alt="Logo UTMACH" style="max-width: 300px; height: auto; margin: 0 auto; display: block;">
+                    
+                    <h1 style="font-weight: bold; color: #19457C; font-style: italic; text-align: center; margin-top: 20px;">
+                        Inicio de Sesión Exitoso
+                    </h1>
+                    
+                    <h3 style="font-weight: bold; text-align: center; margin-bottom: 10px;">
+                        Estimado/a <span style="color: #0056b3; font-weight: bold;">${usuario.nombres} ${usuario.apellidos}</span>, <br>
+                        Se ha registrado un inicio de sesión en tu cuenta el <strong>${fechaHora}</strong>.
+                    </h3>
+                    
+                    <h3 style="font-weight: bold; text-align: center; margin-bottom: 10px;">
+                        <span style="font-weight: bold;">Dirección IP:</span> <span style="color: #0056b3;">${ipConexion}</span>
+                    </h3>
+
+                    <p style="font-size: 16px; color: #333; margin-top: 20px; text-align: center;">
+                        Si reconoces este inicio de sesión, no es necesario que realices ninguna acción. <br>
+                        Si no has sido tú, te recomendamos cambiar tu contraseña de inmediato y contactar con el soporte técnico.
+                    </p>
+
+                    <footer style="text-align: center; margin-top: 30px; font-size: 14px; color: #888;">
+                        <p>Atentamente,</p>
+                        <p><strong>Equipo de Seguridad UTMACH</strong></p>
+                        <p>Universidad Técnica de Machala</p>
+                    </footer>
+                </div>
+            `;
+
+            await sendEmail(usuario.email, "Inicio de Sesión Exitoso", mensajeHTML);
+
             return res.status(200).json({
                 idusuario: usuario.idusuario,
                 idtipousu: usuario.idtipousu,
@@ -194,7 +231,7 @@ async function verificarUsuario(req, res) {
                 apellidos: usuario.apellidos,
                 email: usuario.email,
                 avatar: usuario.avatar,
-                verificaciondedospasos: false // Enviado solo cuando la verificación en dos pasos está desactivada
+                verificaciondedospasos: false
             });
         }
 
